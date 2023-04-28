@@ -1,0 +1,4 @@
+node_modules/
+assets/
+.github/
+test-e2e/
