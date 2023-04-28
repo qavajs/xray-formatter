@@ -33,9 +33,14 @@ add config file xrayConfig.ts to test-e2e
 
 ### F.A.Q
 - Does it work with Jira Server?
+  
   Not yet
+  
 - What multiple test automated cases mapped to one xray test case?
+  
   Test will get status from last result with corresponding tag
+  
 - What multiple xray cases mapped to one test automation case?
+  
   All mapped test cases will get same status
 
