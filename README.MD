@@ -8,7 +8,8 @@ To install formatter run
 `npm install @qavajs/xray-formatter`
 
 and add to formatter section in config file
-
+ 
+cloud configuration:
 ```javascript
 export default {
     format: ['@qavajs/xray-formatter:report/xray.out'],
@@ -22,7 +23,20 @@ export default {
 }
 ```
 
-or pass `--format @qavajs/xray-formatter in cli`
+server configuration:
+```javascript
+export default {
+    format: ['@qavajs/xray-formatter:report/xray.out'],
+    formatOptions: {
+        xray: {
+            endpoint: 'https://your.jira.instance/jira', //jira api endpoint
+            client_secret: 'client_secret', // personal access key from jira instance
+            testExecutionKey: 'ABC-12' // test execution jira key to send result
+        }
+    }
+}
+```
+
 ### How it works?
 Plugin reads all tags in jira key format (@ABCD-123) and update corresponding scenarios in provided test execution
 
@@ -34,7 +48,7 @@ add config file xrayConfig.ts to test-e2e
 ### F.A.Q
 - Does it work with Jira Server?
   
-  Not yet
+  Yes
   
 - What multiple test automated cases mapped to one xray test case?
   
