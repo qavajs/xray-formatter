@@ -7,7 +7,7 @@ To install formatter run
 
 `npm install @qavajs/xray-formatter`
 
-and add to formatter section in config file
+add to formatter section in config file
  
 cloud configuration:
 ```javascript
@@ -17,7 +17,8 @@ export default {
         xray: {
             client_id: 'client_id', // generated client_id from xray cloud
             client_secret: 'client_secret', // generated client_id from xray client_secret
-            testExecutionKey: 'ABC-12' // test execution jira key to send result
+            testExecutionKey: 'ABC-12', // test execution jira key to send result
+            tagRegexp: 'TEST_(.+)' // optional, parse tag regexp. default /@(.+-\d+)/
         }
     }
 }
@@ -31,14 +32,15 @@ export default {
         xray: {
             endpoint: 'https://your.jira.instance/jira', //jira api endpoint
             client_secret: 'client_secret', // personal access key from jira instance
-            testExecutionKey: 'ABC-12' // test execution jira key to send result
+            testExecutionKey: 'ABC-12', // test execution jira key to send result
+            tagRegexp: 'TEST_(.+)' // optional, parse tag regexp
         }
     }
 }
 ```
 
 ### How it works?
-Plugin reads all tags in jira key format (@ABCD-123) and update corresponding scenarios in provided test execution
+Plugin reads all tags in jira key format (@ABCD-123) or ones that matches `tagRegexp` and update corresponding scenarios in provided test execution
 
 ### Development
 `npm install`

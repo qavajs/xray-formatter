@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { ITestCaseAttempt } from '@cucumber/cucumber/lib/formatter/helpers/event_data_collector';
 import { failed, passed } from './utils';
 
@@ -7,6 +6,7 @@ export type XRayOptions = {
     client_secret: string;
     testExecutionKey: string;
     endpoint?: string;
+    tagRegexp?: string;
 }
 
 type AuthOptions = {
@@ -24,6 +24,7 @@ export class XrayClient {
     serverImportExecutionEndpoint: string = '/rest/raven/2.0/api/import/execution';
     isCloud = false;
     private options: XRayOptions;
+    tagRegexp: RegExp;
 
     constructor(options: XRayOptions) {
         this.options = options;
@@ -39,6 +40,7 @@ export class XrayClient {
         this.importExecutionEndpoint = this.isCloud
             ? this.cloudXrayEndpoint + this.cloudImportExecutionEndpoint
             : options.endpoint + this.serverImportExecutionEndpoint;
+        this.tagRegexp = this.options.tagRegexp ? new RegExp(this.options.tagRegexp) : /@(.+-\d+)/
     }
 
     /**
@@ -56,8 +58,8 @@ export class XrayClient {
 
     async finishTest(result: ITestCaseAttempt) {
         const tags = result.pickle.tags
-            .filter(tag => /@.+-\d+/.test(tag.name))
-            .map(tag => tag.name.replace('@', ''));
+            .map(tag => tag.name.match(this.tagRegexp)?.pop())
+            .filter(tag => tag);
         if (tags.length === 0) return;
         const token = await this.token;
         const status = result.worstTestStepResult.status === 'PASSED'
