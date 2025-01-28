@@ -52,9 +52,9 @@ add config file xrayConfig.ts to test-e2e
   
   Yes
   
-- What multiple test automated cases mapped to one xray test case?
-  
-  Test will get status from last result with corresponding tag
+- What if multiple automated test cases are mapped to one Xray test case?
+
+  The Xray test will fail if any one of the test cases fails.
   
 - What multiple xray cases mapped to one test automation case?
   
