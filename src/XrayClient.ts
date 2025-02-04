@@ -25,6 +25,7 @@ export class XrayClient {
     isCloud = false;
     private options: XRayOptions;
     tagRegexp: RegExp;
+    testStatuses: { [key: string]: string } = {};
 
     constructor(options: XRayOptions) {
         this.options = options;
@@ -60,15 +61,23 @@ export class XrayClient {
     async finishTest(result: ITestCaseAttempt) {
         const tags = result.pickle.tags
             .map(tag => tag.name.match(this.tagRegexp)?.pop())
-            .filter(tag => tag);
+            .filter(tag => tag) as string[];
         if (tags.length === 0) return;
         const token = await this.token;
-        const status = result.worstTestStepResult.status === 'PASSED'
-            ? passed(this.isCloud)
-            : failed(this.isCloud);
+        const testCaseStatus = result.worstTestStepResult.status;
+        const tests = [];
+        for (let tag of tags) {
+            if ([undefined, 'PASSED'].includes(this.testStatuses[tag])) {
+                this.testStatuses[tag] = testCaseStatus;
+            }
+            const status = this.testStatuses[tag] === 'PASSED'
+                ? passed(this.isCloud)
+                : failed(this.isCloud);
+            tests.push({testKey: tag, status})
+        }
         const payload = {
             testExecutionKey: this.options.testExecutionKey,
-            tests: tags.map(testKey => ({testKey, status}))
+            tests
         };
         try {
             const sendResultResponse = await fetch(this.importExecutionEndpoint, {
