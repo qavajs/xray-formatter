@@ -30,6 +30,7 @@ export class XrayClient {
         this.options = options;
         this.isCloud = !options.endpoint;
 
+        if(!this.options.testExecutionKey) throw new Error('Test execution key is not provided!')
         this.token = this.isCloud
             ? this.auth({
                 client_id: options.client_id,
