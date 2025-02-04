@@ -1,3 +1,6 @@
+## 0.2.1
+- throw error if testExecutionKey is not provided
+
 ## 0.2.0
 - updated test status based on example results
 
