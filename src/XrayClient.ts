@@ -7,6 +7,7 @@ export type XRayOptions = {
     testExecutionKey: string;
     endpoint?: string;
     tagRegexp?: string;
+    requestsPerSecond?: number;
 }
 
 type AuthOptions = {
@@ -26,6 +27,8 @@ export class XrayClient {
     private options: XRayOptions;
     tagRegexp: RegExp;
     testStatuses: { [key: string]: string } = {};
+    promiseQueueModule: any = import('p-queue');
+    promiseQueue: any;
 
     constructor(options: XRayOptions) {
         this.options = options;
@@ -79,21 +82,27 @@ export class XrayClient {
             testExecutionKey: this.options.testExecutionKey,
             tests
         };
-        try {
-            const sendResultResponse = await fetch(this.importExecutionEndpoint, {
-                method: 'POST',
-                body: JSON.stringify(payload),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const sendResultResponsePayload: any = await sendResultResponse.json();
-            if (sendResultResponsePayload.error) {
-                console.warn(sendResultResponsePayload.error);
-            }
-        } catch (err: any) {
-            console.warn(err.message);
+        if (!this.promiseQueue) {
+            const { default: PQueue } = await this.promiseQueueModule
+            this.promiseQueue = new PQueue({ interval: 1000, intervalCap: this.options.requestsPerSecond })
         }
+        this.promiseQueue.add(async () => {
+            try {
+                const sendResultResponse = await fetch(this.importExecutionEndpoint, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const sendResultResponsePayload: any = await sendResultResponse.json();
+                if (sendResultResponsePayload.error) {
+                    console.warn(sendResultResponsePayload.error);
+                }
+            } catch (err: any) {
+                console.warn(err.message);
+            }
+        })
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@qavajs/xray-formatter",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "xray formatter for cucumber framework",
   "scripts": {
     "build": "tsc",
@@ -31,5 +31,8 @@
     "@types/node-fetch": "^2.6.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "p-queue": "^8.1.0"
   }
 }

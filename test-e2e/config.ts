@@ -7,7 +7,8 @@ export default {
             client_id: 'client_id', // generated client_id from xray cloud
             client_secret: 'client_secret', // generated client_id from xray client_secret
             testExecutionKey: 'ABC-12', // test execution jira key to send result
-            tagRegexp: 'TEST_(.+)' // optional, parse tag regexp. default /@(.+-\d+)/
+            tagRegexp: 'TEST_(.+)', // optional, parse tag regexp. default /@(.+-\d+)/
+            requestsPerSecond: 1 // optional, requests to Xray per second (to prevent rate limit error)
         }
     },
     publishQuiet: true
